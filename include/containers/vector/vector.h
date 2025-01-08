@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <cstddef>
+#include <memory>
 
 namespace sinensis
 {
@@ -9,19 +10,16 @@ namespace sinensis
 	class vector
 	{
 	private:
-		T* _memoryBlock;
+		std::unique_ptr<T[]> _memoryBlock;
 		std::size_t _size;
 		std::size_t _capacity;
 	public:
-		vector() : _memoryBlock(nullptr), _size(0), _capacity(0) {}
-		
-		~vector()
+		vector() : _size(0), _capacity(0) 
 		{
-			if (_memoryBlock) 
-			{
-				delete[] _memoryBlock;
-			}
+			_memoryBlock = std::make_unique<T[]>(0);
 		}
+		
+		~vector() = default;
 	
 		T& operator[](std::size_t index)
 		{
@@ -61,14 +59,13 @@ namespace sinensis
 		
 		void resize(std::size_t newCapacity)
 		{
-			T* newMemoryBlock = new T[newCapacity];
+			std::unique_ptr<T[]> newMemoryBlock = std::make_unique<T[]>(newCapacity);
 			for (std::size_t i = 0; i < _size; i++)
 			{
 				newMemoryBlock[i] = _memoryBlock[i];
 			}
 			
-			delete[] _memoryBlock;
-			_memoryBlock = newMemoryBlock;
+			_memoryBlock = std::move(newMemoryBlock);
 			_capacity = newCapacity;
 		}
 	};
