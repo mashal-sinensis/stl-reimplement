@@ -29,6 +29,36 @@ namespace sinensis
 			}
 			return _memoryBlock[index];
 		}
+		
+		/* -- Does not seem to work
+
+		explicit vector<T>(std::initializer_list<T> ilist) : _size(ilist.size()), _capacity(_size)
+		{
+			assign_range(ilist.begin(), ilist.end());
+		}
+	
+		template <typename Itr>
+		void assign_range(Itr first, Itr last)
+		{
+			clear();
+			_size = std::distance(first, last);
+			_capacity = _size;
+			_memoryBlock = std::make_unique<T[]>(_size);
+			for (auto itr = first; itr != last; ++itr)
+			{
+				_memoryBlock[_size - static_cast<std::size_t>(std::distance(first, last))] = *itr;
+			}
+		}
+		
+		 void swap(vector<T>& other)
+		 {
+		 	assign_range(other.begin(), other.end());
+		 }
+		*/
+
+		T* begin() const { return _memoryBlock.get(); }
+
+		T* end() const { return _memoryBlock.get() + _size; } 
 
 		std::size_t size() const { return _size; }
 

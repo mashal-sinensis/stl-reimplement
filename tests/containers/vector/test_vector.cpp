@@ -36,7 +36,29 @@ int main()
 	assert(v.capacity()==4);
 	assert(v[0]==1);
 	assert(v[1]==2);
+
+	sinensis::vector<int> v1;
+	v1.push_back(3);
+	v1.push_back(2);
+	v1.push_back(1);
 	
+	assert(v1.size()==3);
+	assert(v1.capacity()==4);
+	assert(v1[0]==3);
+	assert(v1[1]==2);
+	assert(v1[2]==1);
+
+	/*
+
+	v1.swap(v);
+
+	assert(v1.size()==2);
+	assert(v1.capacity()==2);
+	assert(v1[0]==1);
+	assert(v1[1]==2);
+	
+	*/
+
 	v.resize(10);
 	
 	assert(v.size()==2);
