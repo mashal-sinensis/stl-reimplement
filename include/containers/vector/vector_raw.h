@@ -2,7 +2,6 @@
 
 #include <iostream>
 #include <cstddef>
-#include <memory>
 
 namespace sinensis
 {
@@ -10,16 +9,19 @@ namespace sinensis
 	class vector
 	{
 	private:
-		std::unique_ptr<T[]> _memoryBlock;
+		T* _memoryBlock;
 		std::size_t _size;
 		std::size_t _capacity;
 	public:
-		vector() : _size(0), _capacity(0) 
-		{
-			_memoryBlock = std::make_unique<T[]>(0);
-		}
+		vector() : _memoryBlock(nullptr), _size(0), _capacity(0) {}
 		
-		~vector() = default;
+		~vector()
+		{
+			if (_memoryBlock)
+			{
+				delete[] _memoryBlock;
+			}
+		}
 	
 		T& operator[](std::size_t index)
 		{
@@ -42,7 +44,7 @@ namespace sinensis
 			clear();
 			_size = std::distance(first, last) + 1;
 			_capacity = _size;
-			_memoryBlock = std::make_unique<T[]>(_size);
+			_memoryBlock = new T[_size];
 			int count = 0;
 			for (T* itr = first; itr != nullptr; itr++)
 			{
@@ -58,9 +60,9 @@ namespace sinensis
 		}
 		
 
-		T* begin() const { return _memoryBlock.get(); }
+		T* begin() const { return _memoryBlock; }
 
-		T* end() const { return _memoryBlock.get() + _size - 1; } 
+		T* end() const { return _memoryBlock + _size - 1; } 
 
 		std::size_t size() const { return _size; }
 
@@ -91,13 +93,13 @@ namespace sinensis
 		
 		void resize(std::size_t newCapacity)
 		{
-			std::unique_ptr<T[]> newMemoryBlock = std::make_unique<T[]>(newCapacity);
+			T* newMemoryBlock = new T[newCapacity];
 			for (std::size_t i = 0; i < _size; i++)
 			{
 				newMemoryBlock[i] = _memoryBlock[i];
 			}
 			
-			_memoryBlock = std::move(newMemoryBlock);
+			_memoryBlock = newMemoryBlock;
 			_capacity = newCapacity;
 		}
 

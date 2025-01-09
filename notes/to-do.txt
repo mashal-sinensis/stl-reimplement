@@ -1,0 +1,47 @@
+container:
+	vector:
+		completed:
+			contiguous memory storage
+			dynamic memory allocation
+			size
+			capacity
+			constructor
+			destructor
+			operator[]
+			assign_range
+			swap
+			begin
+			push_back
+			pop_back
+			clear
+			resize
+		in-progress:
+			erase
+		paused:
+			list_initializer # Does not work
+		not started:
+			operator=
+			assign
+			reserve
+			shrink_to_fit
+			emplace_back
+			insert
+			insert_range
+			append_range
+			emplace
+			at
+			front
+			back
+			cbegin
+			cend
+			rbegin
+			rend
+			empty
+			max_size
+			erase_if
+
+
+
+
+
+	
