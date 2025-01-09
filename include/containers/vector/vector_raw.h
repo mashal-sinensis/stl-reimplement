@@ -98,19 +98,59 @@ namespace sinensis
 			{
 				newMemoryBlock[i] = _memoryBlock[i];
 			}
-			
+			if (_memoryBlock)
+				delete[] _memoryBlock;	
 			_memoryBlock = newMemoryBlock;
 			_capacity = newCapacity;
 		}
 
-		void erase(T* position)
-		{
+		T* erase(T* position)
+		{			
+			std::size_t remove_index = static_cast<std::size_t>(std::distance(begin(), position));
+			
+			T* newMemoryBlock = new T[_capacity];
+			std::size_t j = 0;
+			for (std::size_t i = 0; i < _size; i++)
+			{
+				if (i == remove_index) i++;
 
+				newMemoryBlock[j] = _memoryBlock[i];
+				j++;
+			}
+			_size--;
+			if (_memoryBlock)
+				delete[] _memoryBlock;
+
+			_memoryBlock = newMemoryBlock;
+			
+			return (remove_index == _size) ? end() : begin()+remove_index;	
 		}
 
-		void erase(T* begin, T* end)
+		T* erase(T* start, T* finish)
 		{
+			std::size_t remove_index_first = static_cast<std::size_t>(std::distance(begin(), start));
+			std::size_t remove_index_last = static_cast<std::size_t>(std::distance(begin(), finish));
 
+			bool removed_last = remove_index_last >= (_size - 1);			
+			
+			T* newMemoryBlock = new T[_capacity];
+			std::size_t j = 0;
+			for (std::size_t i = 0; i < _size; i++)
+			{
+				if (i < remove_index_first || i > remove_index_last) 
+				{
+					newMemoryBlock[j] = _memoryBlock[i];
+					j++;
+				}
+			}
+			
+			_size -= (remove_index_last - remove_index_first) + 1;
+			if (_memoryBlock)
+				delete[] _memoryBlock;
+
+			_memoryBlock = newMemoryBlock;
+
+			return (removed_last)  ? end() : begin()+remove_index_last;
 		}
 	};
 };

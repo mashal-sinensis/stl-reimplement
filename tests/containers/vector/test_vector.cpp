@@ -1,6 +1,11 @@
 #include <cassert>
-#include "vector.h"
-// #include "vector_raw.h" -- raw pointers
+#include "vector_raw.h"
+
+void printList(sinensis::vector<int>& v)
+{
+	for (std::size_t i = 0; i < v.size(); i++)
+		std::cout << "Element #" << i << ": " << v[i] << std::endl;
+}
 
 void checkpoint(int count)
 {
@@ -26,7 +31,7 @@ int main()
 
 	assert(v.size()==1);
 	assert(v.capacity()==1);	
-	assert(v[0]==1);
+	assert(v[0]==1);	
 
 	checkpoint(2);
 
@@ -109,6 +114,30 @@ int main()
 	assert(v1[0]==30);
 	assert(v1[1]==2);
 	assert(v1[2]==3);
+
+	checkpoint(11);
+
+	assert(v1.erase(v1.begin()) == v1.begin());
+	assert(v1[0]==2);
+	assert(v1[1]==3);
+	assert(v1.size()==2);
+
+	checkpoint(12);
+
+	v1.push_back(4);
+	v1.push_back(5);
+	v1.push_back(6);
+	v1.push_back(7);
+
+	assert(v1.size()==6);
+	
+	assert(v1.erase(v1.begin()+2, v1.begin()+4) == v1.begin()+4);
+	assert(v1.size()==3);
+	assert(v1[0]==2);	
+	assert(v1[1]==3);
+	assert(v1[2]==7);
+
+	checkpoint(13);
 
 	std::cout << "All tests have been passed!" << std::endl;
 
