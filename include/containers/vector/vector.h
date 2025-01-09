@@ -30,23 +30,26 @@ namespace sinensis
 			return _memoryBlock[index];
 		}
 		
-		/* -- Does not seem to work
+		// -- Does not seem to work
 
-		explicit vector<T>(std::initializer_list<T> ilist) : _size(ilist.size()), _capacity(_size)
-		{
-			assign_range(ilist.begin(), ilist.end());
-		}
+		// explicit vector<T>(std::initializer_list<T> ilist) : _size(ilist.size()), _capacity(_size)
+		// {
+		// 	assign_range(ilist.begin(), ilist.end());
+		// }
 	
-		template <typename Itr>
-		void assign_range(Itr first, Itr last)
+		void assign_range(T* first, T* last)
 		{
 			clear();
-			_size = std::distance(first, last);
+			_size = std::distance(first, last) + 1;
+			std::cout << "Swap size: " << _size << std::endl;
 			_capacity = _size;
 			_memoryBlock = std::make_unique<T[]>(_size);
-			for (auto itr = first; itr != last; ++itr)
+			int count = 0;
+			for (T* itr = first; itr != nullptr; itr++)
 			{
-				_memoryBlock[_size - static_cast<std::size_t>(std::distance(first, last))] = *itr;
+				_memoryBlock[count] = *itr;
+				count++;
+				if (itr == last) break;
 			}
 		}
 		
@@ -54,11 +57,11 @@ namespace sinensis
 		 {
 		 	assign_range(other.begin(), other.end());
 		 }
-		*/
+		
 
 		T* begin() const { return _memoryBlock.get(); }
 
-		T* end() const { return _memoryBlock.get() + _size; } 
+		T* end() const { return _memoryBlock.get() + _size - 1; } 
 
 		std::size_t size() const { return _size; }
 
@@ -97,6 +100,16 @@ namespace sinensis
 			
 			_memoryBlock = std::move(newMemoryBlock);
 			_capacity = newCapacity;
+		}
+
+		void erase(T* position)
+		{
+
+		}
+
+		void erase(T* begin, T* end)
+		{
+
 		}
 	};
 };
