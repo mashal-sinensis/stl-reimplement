@@ -1,4 +1,5 @@
 #include <cassert>
+#include <algorithm>
 #include "vector_raw.h"
 
 void printList(sinensis::vector<int>& v)
@@ -105,7 +106,7 @@ int main()
 	v.push_back(3);
 
 	assert(*v.begin()==30);
-	assert(*v.end()==3);
+	assert(*(v.end()-1)==3);
 	
 	checkpoint(10);
 	
@@ -138,6 +139,54 @@ int main()
 	assert(v1[2]==7);
 
 	checkpoint(13);
+
+	sinensis::vector<int> v2 = {1, 2, 3};
+
+	assert(v2[0]==1);
+	assert(v2[1]==2);
+	assert(v2[2]==3);
+	assert(v2.size()==3);
+	assert(v2.capacity()==3);
+
+	checkpoint(14);
+	v2 = {5, 4, 3, 2, 1};
+
+	assert(v2[0]==5);
+	assert(v2[1]==4);
+	assert(v2[2]==3);
+	assert(v2[3]==2);
+	assert(v2[4]==1);	
+	assert(v2.size()==5);
+	assert(v2.capacity()==5);
+
+	checkpoint(15);
+
+	v2 = v1;
+	assert(v2[0]==v1[0]);
+	assert(v2[1]==v1[1]);
+	assert(v2[2]==v1[2]);
+	assert(v2.size()==3);
+	assert(v2.capacity()==3);
+
+	checkpoint(16);
+
+	sinensis::vector<int> v4{10, 9, 8, 7};
+	assert(v4[0]==10);
+	assert(v4[1]==9);
+	assert(v4[2]==8);
+	assert(v4[3]==7);
+	assert(v4.size()==4);
+	assert(v4.capacity()==4);
+
+	sinensis::vector<int> v5;
+	v5.assign(10, 5);
+
+	assert(v4.at(3)==7);
+
+	std::for_each(v4.rbegin(), v4.rend(), [](const int n) { std::cout << n << ' '; });
+	std::cout << std::endl;
+
+	checkpoint(17);
 
 	std::cout << "All tests have been passed!" << std::endl;
 

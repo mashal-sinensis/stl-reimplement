@@ -22,6 +22,11 @@ namespace sinensis
 				delete[] _memoryBlock;
 			}
 		}
+
+		vector(std::initializer_list<T> other)
+		{
+			assign_range(other.begin(), other.end());
+		}
 	
 		T& operator[](std::size_t index)
 		{
@@ -31,26 +36,78 @@ namespace sinensis
 			}
 			return _memoryBlock[index];
 		}
-		
-		// -- Does not seem to work
 
-		// explicit vector<T>(std::initializer_list<T> ilist) : _size(ilist.size()), _capacity(_size)
-		// {
-		// 	assign_range(ilist.begin(), ilist.end());
-		// }
-	
-		void assign_range(T* first, T* last)
+		T* operator=(vector<T>& other)
+		{
+			assign_range(other.begin(), other.end());
+			return begin();
+		}
+
+		T* operator=(std::initializer_list<T> other)
+		{
+			assign_range(other.begin(), other.end());
+			return begin();
+		}
+
+		void assign(std::size_t count, const T& value)
 		{
 			clear();
-			_size = std::distance(first, last) + 1;
+			_size = count;
 			_capacity = _size;
 			_memoryBlock = new T[_size];
-			int count = 0;
-			for (T* itr = first; itr != nullptr; itr++)
+			for (std::size_t i = 0; i < _size; i++)
 			{
-				_memoryBlock[count] = *itr;
-				count++;
-				if (itr == last) break;
+				_memoryBlock[i] = value;
+			}
+		}
+
+		void assign(const T* first, const T* last)	
+		{
+			assign_range(first, last);
+		}
+
+		void assign(std::initializer_list<T> ilist)
+		{
+			assign_range(ilist.begin(), ilist.end());			
+		}
+		
+		T& at(std::size_t index)
+		{
+			return _memoryBlock[index];
+		}
+
+		T& front()
+		{
+			return _memoryBlock[0];
+		}
+
+		T& back()
+		{
+			return _memoryBlock[_size-1];
+		}
+
+		T* data()
+		{
+			return _memoryBlock;
+		}
+
+		bool empty()
+		{
+			return (_size == 0);
+		}
+		
+		void assign_range(const T* first, const T* last)
+		{
+			clear();
+			_size = std::distance(first, last);
+			_capacity = _size;
+			_memoryBlock = new T[_size];
+			
+			const T* itr = first;
+			for (std::size_t  i = 0; i < _size; i++)
+			{
+				_memoryBlock[i] = *itr;
+				++itr;
 			}
 		}
 		
@@ -62,7 +119,19 @@ namespace sinensis
 
 		T* begin() const { return _memoryBlock; }
 
-		T* end() const { return _memoryBlock + _size - 1; } 
+		T* end() const { return _memoryBlock + _size; }
+		
+		std::reverse_iterator<const T*> crbegin() const { return std::make_reverse_iterator(end()); }
+
+		std::reverse_iterator<const T*> crend() const { return std::make_reverse_iterator(begin()); }
+
+		std::reverse_iterator<T*> rbegin() { return std::make_reverse_iterator(end()); }
+		
+		std::reverse_iterator<T*> rend() { return std::make_reverse_iterator(begin()); }
+
+		const T* cbegin() const { return _memoryBlock; }
+		
+		const T* cend() const { return _memoryBlock + _size; }
 
 		std::size_t size() const { return _size; }
 

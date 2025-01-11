@@ -11,17 +11,31 @@ container:
 			assign_range
 			swap
 			begin
+			cbegin
+			rbegin
+			crbegin
+			end
+			cend
+			rend
+			crend
 			push_back
 			pop_back
 			clear
 			resize
-		in-progress:
 			erase
-		paused:
-			list_initializer # Does not work
-		not started:
-			operator=
+			operator= (list_initializer, vector<T>&)
+			list_initializer constructor
 			assign
+			empty
+			at
+			front
+			back	
+		in-progress:
+			
+		paused:
+			
+		not started:
+			operator==
 			reserve
 			shrink_to_fit
 			emplace_back
@@ -29,14 +43,6 @@ container:
 			insert_range
 			append_range
 			emplace
-			at
-			front
-			back
-			cbegin
-			cend
-			rbegin
-			rend
-			empty
 			max_size
 			erase_if
 
