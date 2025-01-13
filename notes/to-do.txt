@@ -1,5 +1,18 @@
+Notes:
+	Differences between unique_ptr and raw pointer implementations:
+		unique_ptr:
+			1. Deletion of allocated memory not necessary
+			2. Allocation of memory is slightly different
+					std::unique_ptr<T[]> newMemoryBlock = std::make_unique<T[]>(newCapacity)
+						instead of
+					T* newMemoryBlock = new T(newCapacity);
+			3. Assignment to std::unique_ptr requires the std::move() function
+					_memoryBlock = std::move(newMemoryBlock);
+						instead of
+					_memoryBlock = newMemoryBlock;	
+
 container:
-	vector_raw:
+	vector (both raw pointers and unique pointer implementations):
 		completed:
 			contiguous memory storage
 			dynamic memory allocation
@@ -40,14 +53,11 @@ container:
 		paused:
 			
 		not started:
-			append_range
 			emplace_back
 			append_range
 			insert_range
 			assign_range
 			emplace
-	vector (smart pointers):
-
 
 
 
