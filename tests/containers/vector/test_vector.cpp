@@ -87,7 +87,7 @@ int main()
 	
 	checkpoint(7);
 
-	v.resize(10);
+	v.reserve(10);
 	
 	assert(v.size()==2);
 	assert(v.capacity()==10);
@@ -187,6 +187,58 @@ int main()
 	std::cout << std::endl;
 
 	checkpoint(17);
+
+	std::cout << (v4 == v2) << std::endl;
+	
+	v4.assign(v2.begin(), v2.end());
+	
+	assert(v4 == v2);
+
+	sinensis::vector<int> v6;
+	v6.resize(5, 10);
+	assert(v6.size()==5);
+	assert(v6.capacity()==5);
+	for (int i = 0; i < 5; i++)
+		assert(v6[i]==10);
+	v6.shrink_to_fit(2);
+	assert(v6.size()==2);
+	assert(v6.capacity()==2);
+	assert(v6[0]==10);
+	assert(v6[1]==10);
+
+	std::cout << v6.max_size() << std::endl;
+
+	sinensis::vector<int> v7;
+	v7.push_back(1);
+	v7.push_back(5);
+	v7.push_back(2);
+	v7.push_back(5);
+	v7.push_back(3);
+	v7.push_back(5);
+	v7.erase_if(v7.begin(), v7.end(), 5);
+	assert(v7[0]==1);
+	assert(v7[1]==2);
+	assert(v7[2]==3);
+	assert(v7.size()==3);
+
+	v7.insert(v7.begin(), 2, 2);
+	assert(v7[0]==2);
+	assert(v7[1]==2);
+	assert(v7[2]==1);
+	assert(v7[3]==2);
+	assert(v7[4]==3);
+	assert(v7.size()==5);
+
+	v7.insert(v7.begin(), {1, 2, 3});
+	assert(v7[0]==1);
+	assert(v7[1]==2);
+	assert(v7[2]==3);
+	assert(v7[3]==2);
+	assert(v7[4]==2);
+	assert(v7[5]==1);
+	assert(v7[6]==2);
+	assert(v7[7]==3);
+	assert(v7.size()==8);
 
 	std::cout << "All tests have been passed!" << std::endl;
 

@@ -1,5 +1,7 @@
 container:
 	vector:
+		--
+	vector_raw:
 		completed:
 			contiguous memory storage
 			dynamic memory allocation
@@ -8,7 +10,6 @@ container:
 			constructor
 			destructor
 			operator[]
-			assign_range
 			swap
 			begin
 			cbegin
@@ -30,21 +31,22 @@ container:
 			at
 			front
 			back	
+			operator==
+			reserve
+			shrink_to_fit
+			max_size
+			erase_if
 		in-progress:
 			
 		paused:
 			
 		not started:
-			operator==
-			reserve
-			shrink_to_fit
-			emplace_back
-			insert
-			insert_range
 			append_range
+			emplace_back
+			append_range
+			insert_range
+			assign_range
 			emplace
-			max_size
-			erase_if
 
 
 
