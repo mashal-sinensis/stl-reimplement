@@ -183,13 +183,12 @@ int main()
 
 	assert(v4.at(3)==7);
 
+	std::cout << "Reverse Iterator Output:" << std::endl << '\t';
 	std::for_each(v4.rbegin(), v4.rend(), [](const int n) { std::cout << n << ' '; });
 	std::cout << std::endl;
 
 	checkpoint(17);
 
-	std::cout << (v4 == v2) << std::endl;
-	
 	v4.assign(v2.begin(), v2.end());
 	
 	assert(v4 == v2);
@@ -200,13 +199,13 @@ int main()
 	assert(v6.capacity()==5);
 	for (int i = 0; i < 5; i++)
 		assert(v6[i]==10);
-	v6.shrink_to_fit(2);
-	assert(v6.size()==2);
-	assert(v6.capacity()==2);
-	assert(v6[0]==10);
-	assert(v6[1]==10);
-
-	std::cout << v6.max_size() << std::endl;
+	v6.reserve(100);
+	assert(v6.capacity()==100);
+	v6.shrink_to_fit();
+	assert(v6.size()==5);
+	assert(v6.capacity()==5);
+	for (int i = 0; i < 5; i++)
+		assert(v6[i]==10);
 
 	sinensis::vector<int> v7;
 	v7.push_back(1);

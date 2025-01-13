@@ -1,16 +1,18 @@
 container:
-	vector:
-		--
 	vector_raw:
 		completed:
 			contiguous memory storage
 			dynamic memory allocation
-			size
-			capacity
 			constructor
 			destructor
 			operator[]
-			swap
+			operator=
+			operator==
+			assign	
+			at
+			front
+			back
+			data
 			begin
 			cbegin
 			rbegin
@@ -19,23 +21,20 @@ container:
 			cend
 			rend
 			crend
-			push_back
-			pop_back
-			clear
-			resize
-			erase
-			operator= (list_initializer, vector<T>&)
-			list_initializer constructor
-			assign
 			empty
-			at
-			front
-			back	
-			operator==
+			size
+			max_size
+			capacity
 			reserve
 			shrink_to_fit
-			max_size
-			erase_if
+			clear
+			insert
+			erase
+			erase_if				
+			push_back
+			pop_back
+			resize
+			swap
 		in-progress:
 			
 		paused:
@@ -47,7 +46,7 @@ container:
 			insert_range
 			assign_range
 			emplace
-
+	vector (smart pointers):
 
 
 

@@ -14,38 +14,50 @@ namespace sinensis
 		std::size_t _size;
 		std::size_t _capacity;
 	
-		bool compare(T* other_itr)
+		bool compare(T* other_itr) const
 		{
 			T* itr = begin();
 			for (std::size_t i = 0; i < _size; i++)
 			{
 				if (*itr != *other_itr)
-				{
 					return false;
-				}
-				
 				other_itr++;
 				itr++;
 			}
 			return true;
 		}
 	public:
-		vector() : _memoryBlock(nullptr), _size(0), _capacity(0) {}
+		vector() : _memoryBlock(nullptr), _size(0), _capacity(0) {}	
+
+		vector(std::initializer_list<T> other)
+		{
+			assign(other);
+		}
+
+		vector(std::size_t count, const T& value = T())
+		{
+			resize(count, value);
+		}
+
+		vector(T* first, T* last)
+		{
+			assign(first, last);
+		}
+
+		vector(vector<T>& other)
+		{
+			assign(other);
+		}
 		
 		~vector()
 		{
 			if (_memoryBlock)
-			{
 				delete[] _memoryBlock;
-			}
 		}
 
-		vector(std::initializer_list<T> other)
-		{
-			assign(other.begin(), other.end());
-		}
-	
-		T& operator[](std::size_t index)
+		// Operator Overloads
+
+		T& operator[](std::size_t index) const
 		{
 			if (index >= _size) 
 			{
@@ -66,11 +78,13 @@ namespace sinensis
 			return begin();
 		}	
 
-		bool operator==(vector<T>& other)
+		bool operator==(vector<T>& other) const
 		{
 			return (_size == other.size()) ? compare(other.begin()) : false;
 		}
 
+		// Assign Functions
+			
 		void assign(std::size_t count, const T& value)
 		{
 			clear();
@@ -83,36 +97,6 @@ namespace sinensis
 			}
 		}
 
-		void assign(std::initializer_list<T> ilist)
-		{
-			assign(ilist.begin(), ilist.end());			
-		}
-		
-		T& at(std::size_t index)
-		{
-			return _memoryBlock[index];
-		}
-
-		T& front()
-		{
-			return _memoryBlock[0];
-		}
-
-		T& back()
-		{
-			return _memoryBlock[_size-1];
-		}
-
-		T* data()
-		{
-			return _memoryBlock;
-		}
-
-		bool empty()
-		{
-			return (_size == 0);
-		}
-		
 		void assign(const T* first, const T* last)
 		{
 			clear();
@@ -127,12 +111,35 @@ namespace sinensis
 				++itr;
 			}
 		}
-		
-		void swap(vector<T>& other)
+			
+		void assign(const std::initializer_list<T> ilist)
 		{
-			assign(other.begin(), other.end());
+			assign(ilist.begin(), ilist.end());			
+		}	
+	
+		//	
+	
+		const T& at(std::size_t index) const
+		{
+			return _memoryBlock[index];
 		}
-		
+
+		const T& front() const
+		{
+			return _memoryBlock[0];
+		}
+
+		const T& back() const
+		{
+			return _memoryBlock[_size-1];
+		}
+
+		const T* data() const
+		{
+			return _memoryBlock;
+		}
+
+		// Iterator Getters	
 
 		T* begin() const { return _memoryBlock; }
 
@@ -142,55 +149,23 @@ namespace sinensis
 
 		std::reverse_iterator<const T*> crend() const { return std::make_reverse_iterator(begin()); }
 
-		std::reverse_iterator<T*> rbegin() { return std::make_reverse_iterator(end()); }
+		std::reverse_iterator<T*> const rbegin() { return std::make_reverse_iterator(end()); }
 		
-		std::reverse_iterator<T*> rend() { return std::make_reverse_iterator(begin()); }
+		std::reverse_iterator<T*> const rend() { return std::make_reverse_iterator(begin()); }
 
 		const T* cbegin() const { return _memoryBlock; }
 		
 		const T* cend() const { return _memoryBlock + _size; }
 
-		std::size_t size() const { return _size; }
-
-		std::size_t capacity() const { return _capacity; }
-	
-		void push_back(T data)
-		{
-			if (_size == _capacity)
-			{
-				reserve((_capacity == 0) ? 1 : _capacity * 2);
-			}
-
-			_memoryBlock[_size++] = data;
-		}
-
-		void pop_back()
-		{
-			if (_size > 0)
-			{
-				_size--;
-			}
-		}
+		//
 		
-		void clear()
-		{
-			_size = 0;
-		}
-
-		void resize(std::size_t newCapacity, T value = T())
-		{
-			if (newCapacity <= _capacity) return;
-			T* newMemoryBlock = new T[newCapacity];
-			for (std::size_t i = 0; i < newCapacity; i++)
-			{
-				newMemoryBlock[i] = (i < _size) ? _memoryBlock[i] : value;
-			}
-			if (_memoryBlock)
-				delete[] _memoryBlock;	
-			_memoryBlock = newMemoryBlock;
-			_capacity = newCapacity;
-			_size = newCapacity;
-		}
+		bool empty() const { return (_size == 0); }
+					
+		std::size_t size() const { return _size; }
+	
+		std::size_t max_size() const { return ((pow(2, 64) / sizeof(T)) - 1); }	
+		
+		std::size_t capacity() const { return _capacity; }
 		
 		void reserve(std::size_t newCapacity)
 		{
@@ -205,22 +180,159 @@ namespace sinensis
 			_memoryBlock = newMemoryBlock;
 			_capacity = newCapacity;
 		}
-
-		std::size_t erase_if(T* begin, T* end, T value)
+		
+		void shrink_to_fit()
 		{
-			std::size_t dist = std::distance(begin, end);
+			T* newMemoryBlock = new T[_size];
+			for (std::size_t i = 0; i < _size; i++)
+			{
+				newMemoryBlock[i] = _memoryBlock[i];
+			}
+			if (_memoryBlock)
+				delete[] _memoryBlock;
+			_memoryBlock = newMemoryBlock;
+			_capacity = _size;
+		}
+
+		void clear()
+		{
+			_size = 0;
+		}
+
+		// Insert Functions
+
+		T* insert(const T* position, const T& value)
+		{
+			return insert(position, 1, value);	
+		}
+		
+		T* insert(const T* position, std::size_t count, const T& value)
+		{
+			std::size_t insert_index = std::distance(cbegin(), position);			
+			std::size_t j = 0;
+			_size += count;
+			_capacity += count;
+			T* newMemoryBlock = new T[_capacity];
+			for (std::size_t i = 0; i < _size; i++)
+			{
+				if (i == insert_index)
+				{
+					for (std::size_t k = 0; k < count; k++)
+					{
+						newMemoryBlock[j] = value;
+						j++;
+					}
+				}
+
+				newMemoryBlock[j] = _memoryBlock[i];
+				j++;
+			}
+			if (_memoryBlock) 
+				delete[] _memoryBlock;
+			_memoryBlock = newMemoryBlock;
+			return (begin() + insert_index);
+		}
+
+		T* insert(const T* position, const T* first, const T* last)
+		{
+			std::size_t insert_index = std::distance(cbegin(), position);			
+			std::size_t j = 0;
+			std::size_t count = std::distance(first, last);
+			_size += count;
+			_capacity += count;
+			T* newMemoryBlock = new T[_capacity];
+			for (std::size_t i = 0; i < _size; i++)
+			{
+				if (i == insert_index)
+				{
+					for (std::size_t k = 0; k < count; k++)
+					{
+						newMemoryBlock[j] = *(first + k);
+						j++;
+					}
+				}
+
+				newMemoryBlock[j] = _memoryBlock[i];
+				j++;
+			}
+			if (_memoryBlock) delete[] _memoryBlock;
+			_memoryBlock = newMemoryBlock;
+			return (begin() + insert_index);
+
+		}
+
+		T* insert(const T* position, const std::initializer_list<T> ilist)
+		{
+			return insert(position, ilist.begin(), ilist.end());
+		}
+
+		// Erase Functions
+
+		T* erase(const T* position)
+		{			
+			std::size_t remove_index = static_cast<std::size_t>(std::distance(cbegin(), position));
+			
+			T* newMemoryBlock = new T[_capacity];
+			std::size_t j = 0;
+			for (std::size_t i = 0; i < _size; i++)
+			{
+				if (i == remove_index) i++;
+
+				newMemoryBlock[j] = _memoryBlock[i];
+				j++;
+			}
+			_size--;
+			if (_memoryBlock)
+				delete[] _memoryBlock;
+
+			_memoryBlock = newMemoryBlock;
+			
+			return (remove_index == _size) ? end() : begin()+remove_index;	
+		}
+
+		T* erase(const T* start, const T* finish)
+		{
+			std::size_t remove_index_first = static_cast<std::size_t>(std::distance(cbegin(), start));
+			std::size_t remove_index_last = static_cast<std::size_t>(std::distance(cbegin(), finish));
+
+			bool removed_last = remove_index_last >= (_size - 1);			
+			
+			T* newMemoryBlock = new T[_capacity];
+			std::size_t j = 0;
+			for (std::size_t i = 0; i < _size; i++)
+			{
+				if (i < remove_index_first || i > remove_index_last) 
+				{
+					newMemoryBlock[j] = _memoryBlock[i];
+					j++;
+				}
+			}
+			
+			_size -= (remove_index_last - remove_index_first) + 1;
+			if (_memoryBlock)
+				delete[] _memoryBlock;
+
+			_memoryBlock = newMemoryBlock;
+
+			return (removed_last)  ? end() : begin()+remove_index_last;
+		}
+
+		//
+
+		std::size_t erase_if(const T* start, const T* finish, const T& value)
+		{
+			std::size_t dist = std::distance(start, finish);
 			std::size_t* remove_indices = new size_t[dist];
 			std::size_t remove_indices_size{};
-			T* itr = begin;
-			
+			std::size_t itr_index{};
 			for (std::size_t i = 0; i < dist; i++)
 			{
-				if (*itr == value)
+				if (*(start + itr_index) == value)
 				{
 					remove_indices[remove_indices_size] = i;
 					remove_indices_size++;
 				}
-				itr++;
+				itr_index++;
 			}
 
 			if (remove_indices_size == 0)
@@ -247,139 +359,44 @@ namespace sinensis
 			_memoryBlock = newMemoryBlock;
 			delete[] remove_indices;
 			return remove_indices_size;
-		}
-
-		T* insert(T* position, T value)
-		{
-			return insert(position, 1, value);	
-		}
-
-		T* insert(T* position, std::initializer_list<T> ilist)
-		{
-			return insert(position, ilist.begin(), ilist.end());
-		}
-
-		T* insert(T* position, const T* first, const T* last)
-		{
-			std::size_t insert_index = std::distance(begin(), position);			
-			std::size_t j = 0;
-			std::size_t count = std::distance(first, last);
-			_size += count;
-			_capacity += count;
-			T* newMemoryBlock = new T[_capacity];
-			for (std::size_t i = 0; i < _size; i++)
-			{
-				if (i == insert_index)
-				{
-					for (std::size_t k = 0; k < count; k++)
-					{
-						newMemoryBlock[j] = *(first + k);
-						j++;
-					}
-				}
-
-				newMemoryBlock[j] = _memoryBlock[i];
-				j++;
-			}
-			if (_memoryBlock) delete[] _memoryBlock;
-			_memoryBlock = newMemoryBlock;
-			return (begin() + insert_index);
-
-		}
-
-		T* insert(T* position, std::size_t count, T value)
-		{
-			std::size_t insert_index = std::distance(begin(), position);			
-			std::size_t j = 0;
-			_size += count;
-			_capacity += count;
-			T* newMemoryBlock = new T[_capacity];
-			for (std::size_t i = 0; i < _size; i++)
-			{
-				if (i == insert_index)
-				{
-					for (std::size_t k = 0; k < count; k++)
-					{
-						newMemoryBlock[j] = value;
-						j++;
-					}
-				}
-
-				newMemoryBlock[j] = _memoryBlock[i];
-				j++;
-			}
-			if (_memoryBlock) delete[] _memoryBlock;
-			_memoryBlock = newMemoryBlock;
-			return (begin() + insert_index);
-		}
+		}	
 		
-		std::size_t max_size()
+		void push_back(const T& value)
 		{
-			return ((pow(2, 64) / sizeof(T)) - 1);
+			if (_size == _capacity)
+			{
+				reserve((_capacity == 0) ? 1 : _capacity * 2);
+			}
+
+			_memoryBlock[_size++] = value;
 		}
 
-		void shrink_to_fit(std::size_t newCapacity)
+		void pop_back()
 		{
-			if (newCapacity >= _capacity) return;
+			if (_size > 0)
+			{
+				_size--;
+			}
+		}	
+
+		void resize(std::size_t newCapacity, const T& value = T())
+		{
+			if (newCapacity <= _capacity) return;
 			T* newMemoryBlock = new T[newCapacity];
 			for (std::size_t i = 0; i < newCapacity; i++)
 			{
-				newMemoryBlock[i] = _memoryBlock[i];
+				newMemoryBlock[i] = (i < _size) ? _memoryBlock[i] : value;
 			}
 			if (_memoryBlock)
-				delete[] _memoryBlock;
+				delete[] _memoryBlock;	
 			_memoryBlock = newMemoryBlock;
 			_capacity = newCapacity;
 			_size = newCapacity;
 		}
 
-		T* erase(T* position)
-		{			
-			std::size_t remove_index = static_cast<std::size_t>(std::distance(begin(), position));
-			
-			T* newMemoryBlock = new T[_capacity];
-			std::size_t j = 0;
-			for (std::size_t i = 0; i < _size; i++)
-			{
-				if (i == remove_index) i++;
-
-				newMemoryBlock[j] = _memoryBlock[i];
-				j++;
-			}
-			_size--;
-			if (_memoryBlock)
-				delete[] _memoryBlock;
-
-			_memoryBlock = newMemoryBlock;
-			
-			return (remove_index == _size) ? end() : begin()+remove_index;	
-		}
-
-		T* erase(T* start, T* finish)
+		void swap(const vector<T>& other)
 		{
-			std::size_t remove_index_first = static_cast<std::size_t>(std::distance(begin(), start));
-			std::size_t remove_index_last = static_cast<std::size_t>(std::distance(begin(), finish));
-
-			bool removed_last = remove_index_last >= (_size - 1);			
-			
-			T* newMemoryBlock = new T[_capacity];
-			std::size_t j = 0;
-			for (std::size_t i = 0; i < _size; i++)
-			{
-				if (i < remove_index_first || i > remove_index_last) 
-				{
-					newMemoryBlock[j] = _memoryBlock[i];
-					j++;
-				}
-			}
-			
-			_size -= (remove_index_last - remove_index_first) + 1;
-			if (_memoryBlock)
-				delete[] _memoryBlock;
-
-			_memoryBlock = newMemoryBlock;
-
-			return (removed_last)  ? end() : begin()+remove_index_last;
+			assign(other.begin(), other.end());
 		}
 	};
 };
