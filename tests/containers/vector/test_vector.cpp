@@ -1,5 +1,6 @@
 #include <cassert>
 #include <algorithm>
+#include <iostream>
 #include "vector_raw.h"
 
 void printList(sinensis::vector<int>& v)
